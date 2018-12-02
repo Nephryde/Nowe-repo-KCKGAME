@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -57,7 +58,7 @@ namespace KCKGameWPF
             timer.Interval = new TimeSpan((int)GameSpeed.Moderate);
             timer.Start();
 
-            this.KeyDown += new KeyEventHandler(ChangePlayerDirection);
+            KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
             WriteOnPosition(startingPoint, snake1Color);
             firstPlayerPosition = startingPoint;
@@ -137,10 +138,16 @@ namespace KCKGameWPF
         // do usunięcia?
         private void GameOver()
         {
-            MessageBox.Show($@"You Lose!", "Game Over", MessageBoxButton.OK, MessageBoxImage.Hand);
 
+            MessageBox.Show("Wynik");
+            Application.Current.Shutdown();
         }
 
+        private void Navigate()
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
+        }
         ////
         // Nowe
         ////
