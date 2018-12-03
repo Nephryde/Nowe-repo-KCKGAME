@@ -9,9 +9,6 @@ using System.Windows.Threading;
 
 namespace KCKGameWPF
 {
-    /// <summary>
-    /// Interaction logic for GamePage.xaml
-    /// </summary>
     public partial class GamePage : Page
     {
         static readonly int left = 4;
@@ -121,14 +118,16 @@ namespace KCKGameWPF
             MovePlayers();
         }
 
+
+        ////
+        // Nowe
+        ////
+
         private void Navigate()
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
         }
-        ////
-        // Nowe
-        ////
 
         private void SetGameField()
         {
@@ -146,15 +145,6 @@ namespace KCKGameWPF
             isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
             isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="level"></param>
-
-        
-
-        
 
         private void FillUsed(Point playerPosition, int playerDirection)
         {
@@ -213,7 +203,6 @@ namespace KCKGameWPF
                 WriteOnObstacle(bonusPoint, obstacleColor);
             }
         }
-
 
         private void ChangePlayerDirection(object sender, KeyEventArgs key)
         {
