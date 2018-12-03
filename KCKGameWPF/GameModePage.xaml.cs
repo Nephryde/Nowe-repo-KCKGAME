@@ -31,6 +31,12 @@ namespace KCKGameWPF
             nav.Navigate(new Uri("GamePage.xaml", UriKind.RelativeOrAbsolute));
         }
 
+        private void NewGame2Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("GamePage2.xaml", UriKind.RelativeOrAbsolute));
+        }
+
         private void GoBackClick(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
