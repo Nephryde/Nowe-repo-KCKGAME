@@ -44,7 +44,7 @@
 
             <Button x:Name="NewGameButton" Style="{StaticResource BigButtonStyle}" Content="{StaticResource NewGameText}" Click="NewGameClick" />
             <Button x:Name="ContinueButton" Style="{StaticResource BigButtonStyle}" Content="{StaticResource ContinueText}" Visibility="Collapsed"/>
-            <Button x:Name="StatisticsButton" Style="{StaticResource BigButtonStyle}" Content="{StaticResource StatisticsText}"  />
+            <Button x:Name="StatisticsButton" Style="{StaticResource BigButtonStyle}" Content="{StaticResource StatisticsText}" Click="NewGame2Click"  />
             <Button x:Name="AboutButton" Style="{StaticResource BigButtonStyle}" Content="{StaticResource AboutText}" Click="GoBackClick" />
 
             <StackPanel.Triggers>
