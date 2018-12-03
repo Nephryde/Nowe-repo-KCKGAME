@@ -37,6 +37,8 @@ namespace KCKGameWPF
 
         static bool[,] isUsed;
 
+        int totalRoundNumber, roundNumber;
+
         //Do trybu speed, potem można usunąć
         private enum GameSpeed
         {
@@ -50,8 +52,6 @@ namespace KCKGameWPF
         {
             InitializeComponent();
 
-            Game("obstacles");
-
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += new EventHandler(TimerTick);
 
@@ -60,14 +60,15 @@ namespace KCKGameWPF
 
             Application.Current.MainWindow.KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
-            WriteOnPosition(startingPoint, snake1Color);
-            firstPlayerPosition = startingPoint;
+            Game("obstacles");
 
-            WriteOnPosition(startingPoint2, snake2Color);
-            secondPlayerPosition = startingPoint2;
+            string level = "obstacles";
 
-            isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
-            isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
+            totalRoundNumber = 10;
+            roundNumber = 1;
+
+            if (level == "obstacles")
+                MakeObstacles(roundNumber);
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -79,7 +80,9 @@ namespace KCKGameWPF
 
             if (firstPlayerLoses || secondPlayerLoses)
             {
-                GameOver();
+                MessageBox.Show("Wynik");
+                ResetGame("obstacles");
+
             }
 
             FillUsed(firstPlayerPosition, firstPlayerDirection);
@@ -88,6 +91,70 @@ namespace KCKGameWPF
             WriteOnPosition(firstPlayerPosition, snake1Color);
             WriteOnPosition(secondPlayerPosition, snake2Color);
         }
+
+        private void Game(string level)
+        {
+            SetGameField();
+
+            int totalRoundNumber = 10;
+            int roundNumber = 1;
+
+            if (level == "obstacles")
+                MakeObstacles(roundNumber);
+
+        }
+
+        private void ResetGame(string level)
+        {
+            InvalidateVisual();
+            PaintCanvas.Children.Clear();
+
+            SetGameField();
+            firstPlayerDirection = right;
+            secondPlayerDirection = left;
+
+            roundNumber++;
+
+            if (level == "obstacles" && roundNumber < 10)
+                MakeObstacles(roundNumber);
+
+            MovePlayers();
+        }
+
+        private void Navigate()
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
+        }
+        ////
+        // Nowe
+        ////
+
+        private void SetGameField()
+        {
+            isUsed = new bool[800, 500];
+
+            startingPoint = new Point(4, 230);
+            startingPoint2 = new Point(776, 230);
+
+            WriteOnPosition(startingPoint, snake1Color);
+            firstPlayerPosition = startingPoint;
+
+            WriteOnPosition(startingPoint2, snake2Color);
+            secondPlayerPosition = startingPoint2;
+
+            isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
+            isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="level"></param>
+
+        
+
+        
 
         private void FillUsed(Point playerPosition, int playerDirection)
         {
@@ -132,69 +199,6 @@ namespace KCKGameWPF
                     isUsed[(int)obstaclePosition.X + i, (int)obstaclePosition.Y + j] = true;
                 }
             }
-        }
-
-
-        // do usunięcia?
-        private void GameOver()
-        {
-
-            MessageBox.Show("Wynik");
-            Application.Current.Shutdown();
-        }
-
-        private void Navigate()
-        {
-            NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
-        }
-        ////
-        // Nowe
-        ////
-
-        private void SetGameField()
-        {
-            isUsed = new bool[800, 500];
-
-            startingPoint = new Point(4, 230);
-            startingPoint2 = new Point(776, 230);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="level"></param>
-
-        private void Game(string level)
-        {
-            SetGameField();
-
-            int totalRoundNumber = 10;
-            int roundNumber = 1;
-
-            if (level == "obstacles")
-                MakeObstacles(roundNumber);
-
-            /*
-            while (roundNumber <= totalRoundNumber)
-            {
-
-            }
-            */
-        }
-
-        private void ResetGame(ref int roundNumber, string level)
-        {
-            SetGameField();
-            firstPlayerDirection = right;
-            secondPlayerDirection = left;
-
-            roundNumber++;
-
-            if (level == "obstacles" && roundNumber < 10)
-                MakeObstacles(roundNumber);
-
-            MovePlayers();
         }
 
         private void MakeObstacles(int roundNumber)
