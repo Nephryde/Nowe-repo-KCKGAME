@@ -58,7 +58,7 @@ namespace KCKGameWPF
             timer.Interval = new TimeSpan((int)GameSpeed.Moderate);
             timer.Start();
 
-            KeyDown += new KeyEventHandler(ChangePlayerDirection);
+            Application.Current.MainWindow.KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
             WriteOnPosition(startingPoint, snake1Color);
             firstPlayerPosition = startingPoint;
