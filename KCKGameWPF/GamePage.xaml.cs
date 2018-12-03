@@ -49,7 +49,6 @@ namespace KCKGameWPF
             Application.Current.MainWindow.KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
             SetGameField();
-
             MakeObstacles(roundNumber);
         }
 
@@ -65,21 +64,21 @@ namespace KCKGameWPF
                 firstPlayerScore++;
                 secondPlayerScore++;
 
-                MessageBox.Show("Wynik");
+                MessageBox.Show(String.Format("Remis!!! \nKoniec rundy {0} \nWynik: {1} - {2}", roundNumber, firstPlayerScore, secondPlayerScore));
                 ResetGame();
             }
             else if(firstPlayerLoses)
             {
                 secondPlayerScore++;
 
-                MessageBox.Show("Wynik");
+                MessageBox.Show(String.Format("Wygrywa gracz po prawej! \nKoniec rundy {0} \nWynik: {1} - {2}", roundNumber, firstPlayerScore, secondPlayerScore));
                 ResetGame();
             }
             else if(secondPlayerLoses)
             {
                 firstPlayerScore++;
 
-                MessageBox.Show("Wynik");
+                MessageBox.Show(String.Format("Wygrywa gracz po lewej! \nKoniec rundy {0} \nWynik: {1} - {2}", roundNumber, firstPlayerScore, secondPlayerScore));
                 ResetGame();
             }
 
@@ -89,21 +88,21 @@ namespace KCKGameWPF
             WriteOnPosition(firstPlayerPosition, snake1Color);
             WriteOnPosition(secondPlayerPosition, snake2Color);
 
-            if(roundNumber == totalRoundNumber)
+            if(roundNumber > totalRoundNumber)
             {
                 if(firstPlayerScore == secondPlayerScore)
                 {
-                    MessageBox.Show("Remis!!!");
+                    MessageBox.Show(String.Format("Remis!!! \nKoniec gry \nWynik: {0} - {1}", firstPlayerScore, secondPlayerScore));
                     //przekierowanie?
                 }
                 else if(firstPlayerScore > secondPlayerScore)
                 {
-                    MessageBox.Show("Wygrał gracz po lewej!");
+                    MessageBox.Show(String.Format("Wygrał gracz po lewej! \nKoniec gry \nWynik: {0} - {1}", firstPlayerScore, secondPlayerScore));
                     //przekierowanie?
                 }
                 else if(firstPlayerScore < secondPlayerScore)
                 {
-                    MessageBox.Show("Wygrał gracz po prawej!");
+                    MessageBox.Show(String.Format("Wygrał gracz po prawej! \nKoniec gry \nWynik: {0} - {1}", firstPlayerScore, secondPlayerScore));
                     //przekierowanie?
                 }
             }
