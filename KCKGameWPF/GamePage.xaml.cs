@@ -34,52 +34,53 @@ namespace KCKGameWPF
 
         static bool[,] isUsed;
 
-        int totalRoundNumber, roundNumber;
-
-        //Do trybu speed, potem można usunąć
-        private enum GameSpeed
-        {
-            Fast = 1,
-            Moderate = 10000,
-            Slow = 50000,
-            DamnSlow = 500000
-        };
+        int totalRoundNumber = 10;
+        int roundNumber = 1;
 
         public GamePage()
         {
             InitializeComponent();
 
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(TimerTick);
-
-            timer.Interval = new TimeSpan((int)GameSpeed.Moderate);
+            timer.Tick += new EventHandler(Game);
+            timer.Interval = new TimeSpan(10000);
             timer.Start();
 
             Application.Current.MainWindow.KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
-            Game("obstacles");
+            SetGameField();
 
-            string level = "obstacles";
-
-            totalRoundNumber = 10;
-            roundNumber = 1;
-
-            if (level == "obstacles")
-                MakeObstacles(roundNumber);
+            MakeObstacles(roundNumber);
         }
 
-        private void TimerTick(object sender, EventArgs e)
+        private void Game(object sender, EventArgs e)
         {
             MovePlayers();
 
             bool firstPlayerLoses = DoesPlayerLose(firstPlayerPosition);
             bool secondPlayerLoses = DoesPlayerLose(secondPlayerPosition);
 
-            if (firstPlayerLoses || secondPlayerLoses)
+            if(firstPlayerLoses && secondPlayerLoses)
             {
-                MessageBox.Show("Wynik");
-                ResetGame("obstacles");
+                firstPlayerScore++;
+                secondPlayerScore++;
 
+                MessageBox.Show("Wynik");
+                ResetGame();
+            }
+            else if(firstPlayerLoses)
+            {
+                secondPlayerScore++;
+
+                MessageBox.Show("Wynik");
+                ResetGame();
+            }
+            else if(secondPlayerLoses)
+            {
+                firstPlayerScore++;
+
+                MessageBox.Show("Wynik");
+                ResetGame();
             }
 
             FillUsed(firstPlayerPosition, firstPlayerDirection);
@@ -87,21 +88,28 @@ namespace KCKGameWPF
 
             WriteOnPosition(firstPlayerPosition, snake1Color);
             WriteOnPosition(secondPlayerPosition, snake2Color);
+
+            if(roundNumber == totalRoundNumber)
+            {
+                if(firstPlayerScore == secondPlayerScore)
+                {
+                    MessageBox.Show("Remis!!!");
+                    //przekierowanie?
+                }
+                else if(firstPlayerScore > secondPlayerScore)
+                {
+                    MessageBox.Show("Wygrał gracz po lewej!");
+                    //przekierowanie?
+                }
+                else if(firstPlayerScore < secondPlayerScore)
+                {
+                    MessageBox.Show("Wygrał gracz po prawej!");
+                    //przekierowanie?
+                }
+            }
         }
 
-        private void Game(string level)
-        {
-            SetGameField();
-
-            int totalRoundNumber = 10;
-            int roundNumber = 1;
-
-            if (level == "obstacles")
-                MakeObstacles(roundNumber);
-
-        }
-
-        private void ResetGame(string level)
+        private void ResetGame()
         {
             InvalidateVisual();
             PaintCanvas.Children.Clear();
@@ -112,21 +120,9 @@ namespace KCKGameWPF
 
             roundNumber++;
 
-            if (level == "obstacles" && roundNumber < 10)
-                MakeObstacles(roundNumber);
+            MakeObstacles(roundNumber);
 
             MovePlayers();
-        }
-
-
-        ////
-        // Nowe
-        ////
-
-        private void Navigate()
-        {
-            NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private void SetGameField()
@@ -144,64 +140,6 @@ namespace KCKGameWPF
 
             isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
             isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
-        }
-
-        private void FillUsed(Point playerPosition, int playerDirection)
-        {
-            isUsed[(int)playerPosition.X, (int)playerPosition.Y] = true;
-
-            if (playerDirection == left)
-            {
-                for (int i = -4; i <= 4; i++)
-                {
-                    isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + i] = true;
-                }
-            }
-            else if (playerDirection == right)
-            {
-                for (int i = -4; i <= 4; i++)
-                {
-                    isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + i] = true;
-                }
-            }
-            else if (playerDirection == down)
-            {
-                for (int i = -4; i <= 4; i++)
-                {
-                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y - 1] = true;
-                }
-            }
-            else if (playerDirection == up)
-            {
-                for (int i = -4; i <= 4; i++)
-                {
-                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y + 1] = true;
-                }
-            }
-        }
-
-        private void FillUsedObstacles(Point obstaclePosition)
-        {
-            for (int i = -6; i < 13; i++)
-            {
-                for (int j = -6; j < 13; j++)
-                {
-                    isUsed[(int)obstaclePosition.X + i, (int)obstaclePosition.Y + j] = true;
-                }
-            }
-        }
-
-        private void MakeObstacles(int roundNumber)
-        {
-            Random random = new Random();
-
-            for (int i = 1; i <= roundNumber * 2 + 5; i++)
-            {
-                Point bonusPoint = new Point(random.Next(100, 680), random.Next(70, 415));
-
-                FillUsedObstacles(bonusPoint);
-                WriteOnObstacle(bonusPoint, obstacleColor);
-            }
         }
 
         private void ChangePlayerDirection(object sender, KeyEventArgs key)
@@ -290,6 +228,64 @@ namespace KCKGameWPF
             return false;
         }
 
+        private void FillUsed(Point playerPosition, int playerDirection)
+        {
+            isUsed[(int)playerPosition.X, (int)playerPosition.Y] = true;
+
+            if (playerDirection == left)
+            {
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + i] = true;
+                }
+            }
+            else if (playerDirection == right)
+            {
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + i] = true;
+                }
+            }
+            else if (playerDirection == down)
+            {
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y - 1] = true;
+                }
+            }
+            else if (playerDirection == up)
+            {
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y + 1] = true;
+                }
+            }
+        }
+
+        private void FillUsedObstacles(Point obstaclePosition)
+        {
+            for (int i = -6; i < 13; i++)
+            {
+                for (int j = -6; j < 13; j++)
+                {
+                    isUsed[(int)obstaclePosition.X + i, (int)obstaclePosition.Y + j] = true;
+                }
+            }
+        }
+
+        private void MakeObstacles(int roundNumber)
+        {
+            Random random = new Random();
+
+            for (int i = 1; i <= roundNumber * 2 + 5; i++)
+            {
+                Point bonusPoint = new Point(random.Next(100, 680), random.Next(70, 415));
+
+                FillUsedObstacles(bonusPoint);
+                WriteOnObstacle(bonusPoint, obstacleColor);
+            }
+        }
+
         private void WriteOnPosition(Point currentposition, Brush color)
         {
             Ellipse newEllipse = new Ellipse
@@ -320,6 +316,12 @@ namespace KCKGameWPF
             Canvas.SetLeft(rectangle, currentposition.X);
 
             PaintCanvas.Children.Add(rectangle);
+        }
+
+        private void Navigate()
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("MainMenuPage.xaml", UriKind.RelativeOrAbsolute));
         }
     }
 }
